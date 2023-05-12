@@ -1,14 +1,18 @@
 use std::fmt::{Debug, Display, Formatter};
+use std::io::Error;
+use thiserror::Error;
+
+use anyhow::*;
 
 fn main() {
-    let s = "s".to_string();
-    let mut p = Person::new(&s, 1);
-    {
-        let name = "xyz".to_string();
-        p = Person::new(&name, 123);
-    }
-    println!("{:?}", p.is_adult());
-    dump(p);
+    // let s = "s".to_string();
+    // let mut p = Person::new(&s, 1);
+    // {
+    //     let name = "xyz".to_string();
+    //     p = Person::new(&name, 123);
+    // }
+    // println!("{:?}", p.is_adult());
+    // dump(p);
 }
 
 fn dump<T: Named+Debug>(o: T) {
@@ -42,3 +46,29 @@ impl Named for Person<'_> {
         &self.name
     }
 }
+
+
+
+#[derive(Error, Debug)]
+enum MyError {
+    #[error("error A")]
+    A,
+    #[error("error B")]
+    B
+}
+
+
+
+fn with_both() -> Result<(), anyhow::Error> {
+    with_my_error().with_context("this is the first line in with_both")?;
+    with_io_error()?;
+    Ok(())
+}
+
+fn with_io_error() -> Result<(), std::io::Error> {
+    todo!()
+}
+fn with_my_error() -> Result<(), MyError> {
+    todo!();
+}
+
