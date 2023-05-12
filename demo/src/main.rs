@@ -1,27 +1,44 @@
+use std::fmt::{Debug, Display, Formatter};
 
 fn main() {
-    let a = "ihr alle".to_string();
-    println!("{}", greeting(Some(&a)));
-    println!("{}", greeting(Some(&a)));
-    println!("{}", greeting(None));
-
-    greeting(None);
+    let s = "s".to_string();
+    let mut p = Person::new(&s, 1);
+    {
+        let name = "xyz".to_string();
+        p = Person::new(&name, 123);
+    }
+    println!("{:?}", p.is_adult());
+    dump(p);
 }
 
-#[must_use="greeting must be used"]
-fn greeting(name: Option<&String>) -> String {
-    format!("Hallo, {}", match name {
-        None => "Fremder",
-        Some(n) => n,
-    })
+fn dump<T: Named+Debug>(o: T) {
+    println!("{:?} is called {}", o, o.name());
 }
 
-#[cfg(test)]
-mod test {
-    use super::greeting;
+trait Named {
+    fn name(&self) -> &str;
+}
 
-    #[test]
-    fn test_greeting() {
-        assert_eq!("Hallo, Fremder".to_string(), greeting(None));
+#[derive(Debug)]
+pub struct Person<'a> {
+    name: &'a String,
+    age: u8,
+}
+impl <'b> Person<'b> {
+    pub fn new(name: &'b String, age: u8) -> Person<'b> {
+        Person {
+            name: name,
+            age,
+        }
+    }
+
+    fn is_adult(&self) -> bool {
+        self.age >= 18
+    }
+}
+
+impl Named for Person<'_> {
+    fn name(&self) -> &str {
+        &self.name
     }
 }
