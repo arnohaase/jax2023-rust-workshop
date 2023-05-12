@@ -1,0 +1,8 @@
+[package]
+name = "master_mind"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+colorize = "0.1"
+rand = "0.8"
